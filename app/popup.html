@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <!-- build:css styles/popup-vendor.css -->
+  <!-- bower:css -->
+  <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+  <!-- endbower -->
+  <!-- endbuild -->
+  <!-- build:css styles/popup.css -->
+  <link href="styles/popup.css" rel="stylesheet">
+  <link href="styles/spinner.css" rel="stylesheet">
+  <!-- endbuild -->
+</head>
+
+<body>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12 header">
+        <h1>Pomato</h1>
+        <hr/>
+      </div>
+    </div>
+    <div id="spinner_container" class="row">
+      <div class="col-md-12 text-center spinner">
+        <div class="rect1"></div>
+        <div class="rect2"></div>
+        <div class="rect3"></div>
+        <div class="rect4"></div>
+        <div class="rect5"></div>
+      </div>
+    </div>
+    <div id="login_container" class="row hidden">
+      <div class="col-md-12 text-center">
+        <p>
+          You're not currently logged in. Sign in
+          <a href="" target="_blank">here</a>.
+        </p>
+      </div>
+    </div>
+    <div id="message_container" class="row hidden">
+      <div class="col-md-12 text-center">
+        <p>
+          ...
+        </p>
+      </div>
+    </div>
+    <div id="uploadhistory_container" class="row hidden">
+      <div class="col-md-12">
+        <hr/>
+        <a class="uploadhistory_toggle collapsed" data-toggle="collapse" data-target="#uploadhistory_content" aria-expanded="false">
+          <img/>Upload History <span>(Clean All)</span>
+        </a>
+        <div id="uploadhistory_content" class="collapse">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 text-center footer">
+        <a href="https://chrome.google.com/webstore/detail/launchmenu/anenlcaiedogpakpgbchfpmeaagjndam/reviews" target="_blank">
+          Love Pomato? Rate us!
+        </a>
+      </div>
+    </div>
+  </div>
+  <!-- build:js scripts/popup-vendor.js -->
+  <!-- bower:js -->
+  <script src="bower_components/jquery/dist/jquery.js"></script>
+  <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+  <script src="bower_components/hi-base64/src/base64.js"></script>
+  <!-- endbower -->
+  <!-- endbuild -->
+  <!-- build:js scripts/popup.js -->
+  <script src="scripts/common/config.js"></script>
+  <script src="scripts/popup/popup.js"></script>
+  <!-- endbuild -->
+</body>
+
+</html>
