@@ -4,7 +4,7 @@
  *
  * Component: Popup
  *
- * (c) Copyright by Pomato
+ * (c) Copyright by Alltech
  **/
 
 'use strict';
@@ -14,12 +14,16 @@ var Popup = function() {
 
   this.userData = null;
   this.localFilename = '';
-  this.remoteFilename = '';
+  // this.remoteFilename = '';
+  this.objProfileInfo = null;
+  this.resumeFilepath = null;
+  this.resumeFilename = '';
 
   this.status = {
     NONE: 0,
     EXTRACTING: 10,
     DOWNLOADING: 20,
+    READY: 30,
     UPLOADING: 50,
     COMPLETE: 100,
     FAILED: -1,
@@ -33,7 +37,7 @@ var Popup = function() {
 
 Popup.prototype.run = function() {
   $(document).ready(function() {
-    console.log('[Pomato Plugin Background] is requesting for the User Data.');
+    console.log('[Alltech Plugin Popup] is requesting for the User Data.');
 
     chrome.runtime.sendMessage({ action: App.message_actions.GET_USER_DATA });
 
@@ -41,9 +45,90 @@ Popup.prototype.run = function() {
 
     $('a.uploadhistory_toggle span').click(function() {
       this.updateUploadHistory(null);
-      
+
       chrome.runtime.sendMessage({ action: App.message_actions.CLEAN_HISTORY });
     }.bind(this));
+
+    typeof $.typeahead === 'function' && $.typeahead({
+      input: '.js-typeahead-jobs',
+      minLength: 1,
+      maxItem: 8,
+      maxItemPerGroup: 6,
+      order: 'asc',
+      hint: true,
+      searchOnFocus: true,
+      blurOnTab: false,
+      matcher: function(item, displayKey) {
+        if (item.id === 'BOS') {
+          // Disable Boston for X reason
+          item.disabled = true;
+        }
+        // Add all items matched items
+        return true;
+      },
+      multiselect: {
+        limit: 10,
+        limitTemplate: 'You can\'t select more than 10 jobs',
+        matchOn: ['id'],
+        cancelOnBackspace: true,
+        data: function() {
+
+          var deferred = $.Deferred();
+
+          // setTimeout(function() {
+          //   deferred.resolve([{
+          //     "matchedKey": "title",
+          //     "title": "Javascript"
+          //     "group": "jobs"
+          //   }]);
+          // }, 2000);
+
+          deferred.always(function() {
+            console.log('data loaded from promise');
+          });
+
+          return deferred;
+        },
+        callback: {
+          onClick: function(node, item, event) {
+            console.log(item);
+          },
+          onCancel: function(node, item, event) {
+            console.log(item);
+          }
+        }
+      },
+      templateValue: '{{id}} - {{title}}',
+      display: ['id', 'title'],
+      emptyTemplate: 'no result for {{query}}',
+      source: {
+        jobs: {
+          url: App.domain + App.serviceURL
+        }
+      },
+      callback: {
+        // onClick: function(node, a, item, event) {
+        //   console.log(item.title + ' Added!')
+        // },
+        onSubmit: function(node, form, items, event) {
+          event.preventDefault();
+
+          this.objProfileInfo.jobIds = items.map(function(item) {
+            return item.id
+          }).join(',');
+
+          chrome.runtime.sendMessage({
+            action: App.message_actions.UPLOAD_RESUME,
+            data: this.objProfileInfo,
+            filepath: this.resumeFilepath,
+            filename: this.resumeFilename
+          });
+
+          this.setProgress(this.status.UPLOADING);
+        }.bind(this)
+      },
+      debug: false
+    });
   }.bind(this));
 };
 
@@ -53,18 +138,20 @@ Popup.prototype.setUserLogin = function(bLoggedIn) {
     this.isUserLoggedIn = true;
     $('#login_container').toggleClass('hidden', true);
     $('#message_container').toggleClass('hidden', false);
+    $('#searchbox_container').toggleClass('hidden', false);
+    $('#jobs_container').toggleClass('hidden', false);
 
-    console.log('[Pomato Plugin Popup] current Progress:', this.progress);
+    console.log('[Alltech Plugin Popup] current Progress:', this.progress);
 
     if (this.progress === this.status.NONE) {
-      console.log('[Pomato Plugin Popup] is trying to extract the Resume File')
+      console.log('[Alltech Plugin Popup] is trying to extract the Profile Info')
       this.setProgress(this.status.EXTRACTING);
 
       chrome.tabs.query({
         active: true,
         currentWindow: true
       }, function(tabs) {
-        chrome.tabs.sendMessage(tabs[0].id, { action: App.message_actions.EXTRACT_RESUME_REMOTEFILE });
+        chrome.tabs.sendMessage(tabs[0].id, { action: App.message_actions.EXTRACT_PROFILE_INFO });
       }.bind(this));
     }
   } else {
@@ -129,13 +216,17 @@ Popup.prototype.showLoadingSpinner = function(bShow) {
 Popup.prototype.setProgress = function(value, message) {
   this.progress = value;
 
+  if (!$('.typeahead__button button').prop('disabled')) {
+    $('.typeahead__button button').prop('disabled', true);
+  }
+
   if (value == this.status.WAITING_USER_CONFIRMATION) {
     $('#message_container p').toggleClass('error', false);
 
     $('#message_container p').html('You have already uploaded the current resume. <a id="upload_again" href="#">Upload again.</a>');
 
     $('#upload_again').click(function() {
-      chrome.runtime.sendMessage({ action: App.message_actions.FORCE_UPLOAD_RESUME, data: this.remoteFilename });
+      // chrome.runtime.sendMessage({ action: App.message_actions.FORCE_READ_RESUME, data: this.objProfileInfo });
     }.bind(this));
   } else if (value != this.status.FAILED) {
     $('#message_container p').toggleClass('error', false);
@@ -145,16 +236,25 @@ Popup.prototype.setProgress = function(value, message) {
         message = 'Checking the validity of the current page...';
         break;
       case this.status.EXTRACTING:
-        message = 'Extracting the resume URL...';
+        message = 'Extracting the profile info...';
         break;
       case this.status.DOWNLOADING:
-        message = 'Downloading the resume...';
+        message = 'Reading the resume...';
         break;
       case this.status.UPLOADING:
-        message = 'Uploading the resume (' + this.localFilename + ')';
+        message = 'Uploading resume (' + this.resumeFilename + ')';
+        $('#searchbox_container').toggleClass('hidden', true);
         break;
       case this.status.COMPLETE:
         message = 'Successfully uploaded the resume.';
+        setTimeout(function() {
+          window.close();
+        }, 1000);
+        break;
+      case this.status.READY:
+        $('.typeahead__button button').prop('disabled', false);
+      default:
+        message = '';
         break;
     }
 
@@ -187,7 +287,7 @@ Popup.prototype.updateUploadHistory = function(uploadHistory) {
     }
   **/
 
-  console.log('[Pomato Plugin Popup] has received a upload history', uploadHistory);
+  console.log('[Alltech Plugin Popup] has received a upload history', uploadHistory);
 
   var bHasAnyUploadHistory = false;
   if (uploadHistory) {
@@ -208,44 +308,38 @@ Popup.prototype.updateUploadHistory = function(uploadHistory) {
 
 //listen for the message from the background.js
 Popup.prototype.listenMessage = function(message, sender, sendResponse) {
-  console.log('[Pomato Plugin Popup] received a message.', message);
+  console.log('[Alltech Plugin Popup] received a message.', message);
 
   switch (message.action) {
-    //This is fired by Backend process.
-    case App.message_actions.USER_DATA:
+    case App.message_actions.USER_DATA: //This is fired by Backend process.
       this.showLoadingSpinner(false);
 
       this.userData = message.data;
       this.updateUploadHistory(message.uploadHistory);
-      if (!this.userData)
-        this.setUserLogin(false);
-      else
-        this.setUserLogin(true);
+      this.setUserLogin(!!this.userData);
       break;
 
-      //This is fired by Content Script with the remote URL of the resume
-    case App.message_actions.RESUME_REMOTEFILE:
+    case App.message_actions.PROFILE_INFO: //This is fired by Content Script after extracting the profile info
       if (message.data) {
-        this.remoteFilename = message.data;
+        this.objProfileInfo = message.data;
         this.setProgress(this.status.DOWNLOADING);
       } else {
-        this.setProgress(this.status.FAILED, 'Failed to extract the resume link in the current page.');
+        this.setProgress(this.status.FAILED, 'Failed to extract the profile in the current page.');
       }
       break;
 
-      //This is fired by Backend process with the filename of the resume
-    case App.message_actions.RESUME_FILENAME:
-      if (message.filename) {
-        this.localFilename = message.filename;
-        this.setProgress(this.status.UPLOADING);
+    case App.message_actions.RESUME_FILEPATH: //This is fired by Backend process with the blob data of the resume
+      if (message.data) {
+        this.resumeFilepath = message.data.filepath;
+        this.resumeFilename = message.data.filename;
+        this.setProgress(this.status.READY);
       } else {
         this.setProgress(this.status.FAILED, 'Couldn\'t find the resume in the current page.');
       }
       break;
 
-      //This is fired by Backend process with the upload result
-    case App.message_actions.UPLOAD_RESULT:
-      if (message.success && message.resumeId) {
+    case App.message_actions.UPLOAD_RESULT: //This is fired by Backend process with the upload result
+      if (message.success) {
         this.updateUploadHistory(message.uploadHistory);
         this.setProgress(this.status.COMPLETE);
       } else {
@@ -253,8 +347,7 @@ Popup.prototype.listenMessage = function(message, sender, sendResponse) {
       }
       break;
 
-      //This is fired by Backend process when the resume has already been uploaded before.
-    case App.message_actions.RESUME_ALREADY_UPLOADED:
+    case App.message_actions.RESUME_ALREADY_DOWNLOADED: //This is fired by Backend process when the resume has already been downloaded before.
       this.setProgress(this.status.WAITING_USER_CONFIRMATION);
       break;
 

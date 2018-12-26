@@ -1,11 +1,12 @@
 {
-  "name": "pomato-chrome-extension",
+  "name": "alltech-chrome-extension",
   "private": true,
   "version": "0.0.0",
   "dependencies": {
     "jquery": "^3.1.1",
     "bootstrap": "^3.3.7",
-    "hi-base64": "^0.2.0"
+    "hi-base64": "^0.2.0",
+    "jquery-typeahead": "^2.10.6"
   },
   "devDependencies": {
     "chai": "^3.5.0",

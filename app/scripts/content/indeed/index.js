@@ -4,7 +4,7 @@
  *
  * Component: Content Scripts
  *
- * (c) Copyright by Pomato
+ * (c) Copyright by Alltech
  **/
 
 var IndeedPage = function() {
@@ -22,7 +22,7 @@ IndeedPage.prototype.extractResumeFile = function() {
 		return '';
 	}
 
-	console.log('[Pomato Plugin Content Script] Resume Link:', element.attr('href'));
+	console.log('[Alltech Plugin Content Script] Resume Link:', element.attr('href'));
 
 	return element.attr('href');
 }

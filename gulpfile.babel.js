@@ -110,7 +110,7 @@ gulp.task('wiredep', () => {
 gulp.task('package', function () {
   var manifest = require('./dist/manifest.json');
   return gulp.src('dist/**')
-      .pipe($.zip('pomato chrome extension-' + manifest.version + '.zip'))
+      .pipe($.zip('alltech chrome extension-' + manifest.version + '.zip'))
       .pipe(gulp.dest('package'));
 });
 

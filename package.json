@@ -1,5 +1,5 @@
 {
-  "name": "pomato-chrome-extension",
+  "name": "alltech-chrome-extension",
   "private": true,
   "engines": {
     "node": ">=0.8.0"

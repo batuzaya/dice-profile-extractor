@@ -6,6 +6,7 @@
   <!-- build:css styles/popup-vendor.css -->
   <!-- bower:css -->
   <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+  <link rel="stylesheet" href="bower_components/jquery-typeahead/src/jquery.typeahead.css" />
   <!-- endbower -->
   <!-- endbuild -->
   <!-- build:css styles/popup.css -->
@@ -18,7 +19,7 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-md-12 header">
-        <h1>Pomato</h1>
+        <h1>Alltech</h1>
         <hr/>
       </div>
     </div>
@@ -39,6 +40,24 @@
         </p>
       </div>
     </div>
+    <div id="searchbox_container" class="row hidden">
+      <div class="col-md-12">
+        <form>
+          <div id="jobs_container" class="typeahead__container hidden">
+            <div class="typeahead__field">
+              <div class="typeahead__query">
+                <input class="js-typeahead-jobs" name="jobs[query]" type="search" placeholder="Search" autocomplete="off">
+              </div>
+              <div class="typeahead__button">
+                <button type="submit" disabled="true">
+                  Submit
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
     <div id="message_container" class="row hidden">
       <div class="col-md-12 text-center">
         <p>
@@ -56,23 +75,24 @@
         </div>
       </div>
     </div>
-    <div class="row">
+    <!-- <div class="row">
       <div class="col-md-12 text-center footer">
         <a href="https://chrome.google.com/webstore/detail/launchmenu/anenlcaiedogpakpgbchfpmeaagjndam/reviews" target="_blank">
-          Love Pomato? Rate us!
+          Love Alltech? Rate us!
         </a>
       </div>
-    </div>
+    </div> -->
   </div>
   <!-- build:js scripts/popup-vendor.js -->
   <!-- bower:js -->
   <script src="bower_components/jquery/dist/jquery.js"></script>
   <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
-  <script src="bower_components/hi-base64/src/base64.js"></script>
+  <script src="bower_components/jquery-typeahead/src/jquery.typeahead.js"></script>
   <!-- endbower -->
   <!-- endbuild -->
   <!-- build:js scripts/popup.js -->
   <script src="scripts/common/config.js"></script>
+  <script src="scripts/common/utils.js"></script>
   <script src="scripts/popup/popup.js"></script>
   <!-- endbuild -->
 </body>

@@ -4,7 +4,7 @@
  *
  * Component: Content Scripts
  *
- * (c) Copyright by Pomato
+ * (c) Copyright by Alltech
  **/
 
 var MonsterPage = function() {
@@ -26,7 +26,7 @@ MonsterPage.prototype.extractResumeFile = function() {
 		return '';
 	}
 
-	console.log('[Pomato Plugin Content Script] Resume Link:', element.attr('href'));
+	console.log('[Alltech Plugin Content Script] Resume Link:', element.attr('href'));
 
 	return 'http://hiring.monster.com' + element.attr('href');
 }
