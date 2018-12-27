@@ -2,6 +2,7 @@ var App = App || {};
 
 // App.domain = 'http://localhost:8080/';
 App.domain = 'https://dev-sourcing.alltechconsultinginc.com';
+// App.domain = 'https://sourcing.alltechconsultinginc.com';
 App.serviceURL = '/es-indexer/chromeext';
 // App.credentials = 'raceuser:Fw#e1r2tdgYD$vd!w';
 

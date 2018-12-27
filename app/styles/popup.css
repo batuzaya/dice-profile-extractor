@@ -114,6 +114,6 @@ a.uploadhistory_toggle span{
   margin-top: 5px;
 }
 
-.padding-small {
+.tags-input input[type='text'] {
   padding: 5px !important;
 }
