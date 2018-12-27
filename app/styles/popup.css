@@ -103,3 +103,17 @@ a.uploadhistory_toggle span{
   text-overflow: ellipsis;
   max-width: 100px;
 }
+
+.typeahead__query,
+.tags_container {
+  width: 75%;
+}
+
+.tags-input {
+  width: 100%;
+  margin-top: 5px;
+}
+
+.padding-small {
+  padding: 5px !important;
+}

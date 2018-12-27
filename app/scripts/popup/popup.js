@@ -49,6 +49,8 @@ Popup.prototype.run = function() {
       chrome.runtime.sendMessage({ action: App.message_actions.CLEAN_HISTORY });
     }.bind(this));
 
+    tagsInput(document.querySelector('input[type="tags"]'));
+
     typeof $.typeahead === 'function' && $.typeahead({
       input: '.js-typeahead-jobs',
       minLength: 1,
@@ -116,6 +118,8 @@ Popup.prototype.run = function() {
           this.objProfileInfo.jobIds = items.map(function(item) {
             return item.id
           }).join(',');
+
+          this.objProfileInfo.tag = $('#tags').val();
 
           chrome.runtime.sendMessage({
             action: App.message_actions.UPLOAD_RESUME,

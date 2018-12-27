@@ -5,6 +5,10 @@
   "dependencies": {
     "jquery": "^3.1.1",
     "bootstrap": "^3.3.7",
-    "jquery-typeahead": "^2.10.6"
+    "jquery-typeahead": "^2.10.6",
+    "tags-input": "^1.1.1"
+  },
+  "resolutions": {
+    "jquery": "^3.1.1"
   }
 }

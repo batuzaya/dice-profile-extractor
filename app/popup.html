@@ -7,6 +7,7 @@
   <!-- bower:css -->
   <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
   <link rel="stylesheet" href="bower_components/jquery-typeahead/src/jquery.typeahead.css" />
+  <link rel="stylesheet" href="bower_components/tags-input/tags-input.css" />
   <!-- endbower -->
   <!-- endbuild -->
   <!-- build:css styles/popup.css -->
@@ -46,12 +47,17 @@
           <div id="jobs_container" class="typeahead__container hidden">
             <div class="typeahead__field">
               <div class="typeahead__query">
-                <input class="js-typeahead-jobs" name="jobs[query]" type="search" placeholder="Search" autocomplete="off">
+                <input class="js-typeahead-jobs padding-small" name="jobs[query]" type="search" placeholder="Search" autocomplete="off">
               </div>
               <div class="typeahead__button">
                 <button type="submit" disabled="true">
                   Submit
                 </button>
+              </div>
+            </div>
+            <div class="typeahead__field">
+              <div class="tags_container">
+                <input class="padding-small" type="tags" name="tags" id="tags" placeholder="Add a tag"/>
               </div>
             </div>
           </div>
@@ -88,6 +94,7 @@
   <script src="bower_components/jquery/dist/jquery.js"></script>
   <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
   <script src="bower_components/jquery-typeahead/src/jquery.typeahead.js"></script>
+  <script src="bower_components/tags-input/tags-input.js"></script>
   <!-- endbower -->
   <!-- endbuild -->
   <!-- build:js scripts/popup.js -->
